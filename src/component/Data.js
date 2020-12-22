@@ -4,7 +4,7 @@ import UseJsonFetch from '../UseJsonFetch';
 export default function Data(props) {
     const { url, options } = props;
 
-    const [{ data, loading, error }] = UseJsonFetch(url, options);
+    const { data, loading, error } = UseJsonFetch(url, options);
     return (
         <div className='div'>
             <div className = 'data'>Data</div>

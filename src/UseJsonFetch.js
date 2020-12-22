@@ -10,43 +10,22 @@ export default function UseJsonFetch(url, options) {
         const fetchData = async () => {
             const timestamp = Date.now();
             timestampRef.current = timestamp;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    setData('Loading..')
-                    setError(response.status);
+            if (!options) {
+                try {
+                    const response = await fetch(url);
+                    if (timestampRef.current === timestamp) {
+                        const data = await response.json();
+                        setData(data.data ? data.data : data.status);
+                    }
+                }
+                catch (e) {
+                    setError(e);
                     setLoading(false);
                 }
-                if (timestampRef.current === timestamp) {
-                    const data = await response.json();
-                    console.log(data);
-                    switch (url) {
-                        case 'http://localhost:7070/data':
-                            setData(data.data);
-                            setError('200 OK');
-                            setLoading(true);
-                            break
-                        case 'http://localhost:7070/error':
-                            setData('Ошибка')
-                            setError(`500 ${data.status}`);
-                            setLoading(false);
-                            break
-                        case 'http://localhost:7070/loading':
-                            setData('Loading')
-                            setError(data.status);
-                            setLoading(true)
-                            break
-                        default:
-                    }
-
+                finally {
+                    setLoading(true);
                 }
 
-            }
-            catch (e) {
-                console.log(error);
-            }
-            finally {
-                setLoading(true);
             }
 
 
@@ -54,9 +33,14 @@ export default function UseJsonFetch(url, options) {
 
         fetchData();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [url])
 
-    return [
-        { data, loading, error }];
+    return (
+        {
+            data,
+            loading,
+            error
+        }
+    )
 }
